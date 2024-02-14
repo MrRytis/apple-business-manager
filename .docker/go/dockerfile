@@ -1,0 +1,9 @@
+FROM golang:1.21.7-alpine3.19
+
+COPY . /app
+WORKDIR /app
+
+RUN go mod download
+RUN go run cmd/migrate/migrate.go
+
+CMD ["go", "run", "cmd/server/main.go"]

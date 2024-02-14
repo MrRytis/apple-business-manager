@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+#  go:
+#    build:
+#      context: .
+#      dockerfile: ./docker/go/dockerfile
+#    volumes:
+#      - .:/app
+#    ports:
+#      - "8080:8080"
+#    restart: unless-stopped
+#    depends_on:
+#      - postgres
+  postgres:
+    build:
+      context: .
+      dockerfile: ./.docker/postgres/dockerfile
+    container_name: abm_postgres
+    environment:
+      POSTGRES_DB: abm_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: abm_rabbitmq
+    ports:
+      - "5672:5672"  # RabbitMQ default port
+      - "15672:15672"  # RabbitMQ Management Plugin UI port
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin_password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+volumes:
+  postgres:
+    driver: local
+  rabbitmq_data:
+    driver: local
