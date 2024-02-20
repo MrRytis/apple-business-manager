@@ -8,51 +8,34 @@ import (
 	"time"
 )
 
-func CreatePendingTransaction() *storage.Transaction {
-	t := storage.Transaction{
-		Number:    uuid.New().String(),
-		AppleId:   sql.NullString{String: "", Valid: false},
-		Status:    storage.TransactionPending,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-
-	return &t
-}
-
-func CreateEnrollOrder(customerId string, contractDate time.Time, number string) *storage.Order {
-	o := storage.Order{
-		CustomerId:   customerId,
-		Number:       number,
-		OrderType:    storage.OrderTypeEnroll,
-		ContractDate: contractDate,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
-	}
-
-	return &o
-}
-
-func CreateDelivery(deliveryNumber string) *storage.Delivery {
-	d := storage.Delivery{
-		Number:    deliveryNumber,
-		Status:    storage.DeliveryPending,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-
-	return &d
-}
-
-func CreateDevices(devices []model.Device) []*storage.Device {
-	var d []*storage.Device
-	for _, device := range devices {
-		d = append(d, &storage.Device{
+func CreatePendingTransaction(req model.EnrollRequest) *storage.Transaction {
+	var devices []*storage.Device
+	for _, device := range req.Devices {
+		devices = append(devices, &storage.Device{
 			Imei:      device.Imei,
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		})
 	}
 
-	return d
+	order := storage.Order{
+		UUID:         uuid.New().String(),
+		CustomerId:   req.CustomerId,
+		OrderType:    storage.OrderTypeEnroll,
+		ContractDate: req.ContractDate,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
+		Devices:      devices,
+	}
+
+	tran := storage.Transaction{
+		UUID:               uuid.New().String(),
+		AppleTransactionId: sql.NullString{String: "", Valid: false},
+		Status:             storage.TransactionPending,
+		CreatedAt:          time.Now(),
+		UpdatedAt:          time.Now(),
+		Order:              &order,
+	}
+
+	return &tran
 }

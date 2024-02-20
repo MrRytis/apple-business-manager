@@ -10,7 +10,7 @@ type Handler struct {
 	Rabbit *queue.Rabbit
 }
 
-func New(db *sqlx.DB, r *queue.Rabbit) *Handler {
+func NewHandler(db *sqlx.DB, r *queue.Rabbit) *Handler {
 	return &Handler{
 		DB:     db,
 		Rabbit: r,

@@ -13,7 +13,7 @@ type Rabbit struct {
 	Pub  *publisher.Publisher
 }
 
-func New(conn *rabbitmq.Conn) (*Rabbit, error) {
+func NewRabbit(conn *rabbitmq.Conn) (*Rabbit, error) {
 	pub, err := publisher.New(conn)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create new publisher")

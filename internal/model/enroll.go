@@ -6,12 +6,10 @@ import (
 )
 
 type EnrollRequest struct {
-	Number         string    `json:"number"`
-	CustomerId     string    `json:"customer_id"`
-	DeliveryNumber string    `json:"delivery_number"`
-	ContractDate   time.Time `json:"contract_date"`
-	ShipDate       time.Time `json:"ship_date"`
-	Devices        []Device  `json:"items"`
+	CustomerId   string    `json:"customer_id"`
+	ContractDate time.Time `json:"contract_date"`
+	ShipDate     time.Time `json:"ship_date"`
+	Devices      []Device  `json:"items"`
 }
 
 type Device struct {
@@ -21,17 +19,7 @@ type Device struct {
 func (r *EnrollRequest) Validate() validator.ValidationErrors {
 	errors := validator.ValidationErrors{}
 
-	err := validator.ValidateString(r.Number, "number", true, 0, 32)
-	if len(err) > 0 {
-		errors.Errors = append(errors.Errors, err...)
-	}
-
-	err = validator.ValidateString(r.CustomerId, "customer_id", true, 0, 32)
-	if len(err) > 0 {
-		errors.Errors = append(errors.Errors, err...)
-	}
-
-	err = validator.ValidateString(r.DeliveryNumber, "delivery_number", true, 0, 32)
+	err := validator.ValidateString(r.CustomerId, "customer_id", true, 0, 32)
 	if len(err) > 0 {
 		errors.Errors = append(errors.Errors, err...)
 	}

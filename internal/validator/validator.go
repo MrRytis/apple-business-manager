@@ -11,7 +11,7 @@ type Validator interface {
 type CustomRequestValidator struct {
 }
 
-func New() *CustomRequestValidator {
+func NewCustomValidator() *CustomRequestValidator {
 	return &CustomRequestValidator{}
 }
 

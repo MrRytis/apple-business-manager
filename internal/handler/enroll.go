@@ -20,44 +20,13 @@ func (h *Handler) Enroll(c echo.Context) error {
 		return err
 	}
 
-	tran := factory.CreatePendingTransaction()
-	order := factory.CreateEnrollOrder(req.CustomerId, req.ContractDate, req.Number)
-	delivery := factory.CreateDelivery(req.DeliveryNumber)
-	devices := factory.CreateDevices(req.Devices)
+	tran := factory.CreatePendingTransaction(req)
 
 	t, err := h.DB.Beginx()
-	if err != nil {
-		return errors.Wrap(err, "failed to create transaction")
-	}
-
-	tran, err = storage.SaveTransactionTx(t, tran)
+	err = storage.SaveEnrollmentTx(t, tran)
 	if err != nil {
 		_ = t.Rollback()
-		return errors.Wrap(err, "failed to save transaction")
-	}
-
-	order.TransactionId = tran.Id
-	order, err = storage.SaveOrderTx(t, order)
-	if err != nil {
-		_ = t.Rollback()
-		return errors.Wrap(err, "failed to save order")
-	}
-
-	delivery.OrderId = order.Id
-	delivery, err = storage.SaveDeliveryTx(t, delivery)
-	if err != nil {
-		_ = t.Rollback()
-		return errors.Wrap(err, "failed to save delivery")
-	}
-
-	for _, device := range devices {
-		device.DeliveryId = delivery.Id
-	}
-
-	devices, err = storage.SaveDevicesTx(t, devices)
-	if err != nil {
-		_ = t.Rollback()
-		return errors.Wrap(err, "failed to save devices")
+		return errors.Wrap(err, "failed to save enrollment")
 	}
 
 	m := message.EnrollMessage{
@@ -76,5 +45,5 @@ func (h *Handler) Enroll(c echo.Context) error {
 		return errors.Wrap(err, "failed to commit transaction")
 	}
 
-	return c.JSON(http.StatusCreated, model.EnrollResponse{Number: tran.Number})
+	return c.JSON(http.StatusCreated, model.EnrollResponse{Number: tran.UUID})
 }
