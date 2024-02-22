@@ -1,18 +1,15 @@
 package handler
 
 import (
-	"github.com/MrRytis/apple-business-manager/internal/queue"
-	"github.com/jmoiron/sqlx"
+	"github.com/MrRytis/apple-business-manager/internal/app"
 )
 
 type Handler struct {
-	DB     *sqlx.DB
-	Rabbit *queue.Rabbit
+	App *app.Application
 }
 
-func NewHandler(db *sqlx.DB, r *queue.Rabbit) *Handler {
+func NewHandler(app *app.Application) *Handler {
 	return &Handler{
-		DB:     db,
-		Rabbit: r,
+		App: app,
 	}
 }

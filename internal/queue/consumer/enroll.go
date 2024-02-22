@@ -21,12 +21,24 @@ const (
 	queue = `enroll.consume`
 )
 
-func NewEnrollConsumer(conn *rabbitmq.Conn, db *sqlx.DB, logger echo.Logger, client *client.AbmClient) (RabbitConsumer, error) {
+type Worker struct {
+	Db     *sqlx.DB
+	Logger echo.Logger
+	Client client.Client
+}
+
+func (c *EnrollConsumer) NewConsumer(conn *rabbitmq.Conn, db *sqlx.DB, logger echo.Logger, client client.Client) (RabbitConsumer, error) {
+	worker := Worker{
+		Db:     db,
+		Logger: logger,
+		Client: client,
+	}
+
 	consumer, err := newConsumer(
 		conn,
 		message.EnrollRoutingKey,
 		queue,
-		NewWorker(db, logger, client),
+		&worker,
 	)
 
 	if err != nil {

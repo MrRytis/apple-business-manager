@@ -11,6 +11,10 @@ type Publisher struct {
 	publisher *rabbitmq.Publisher
 }
 
+func (p *Publisher) Close() {
+	p.publisher.Close()
+}
+
 func New(conn *rabbitmq.Conn) (*Publisher, error) {
 	var opts func(*rabbitmq.PublisherOptions)
 

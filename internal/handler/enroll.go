@@ -22,7 +22,7 @@ func (h *Handler) Enroll(c echo.Context) error {
 
 	tran := factory.CreatePendingTransaction(req)
 
-	t, err := h.DB.Beginx()
+	t, err := h.App.DB.Beginx()
 	err = storage.SaveEnrollmentTx(t, tran)
 	if err != nil {
 		_ = t.Rollback()
@@ -34,7 +34,7 @@ func (h *Handler) Enroll(c echo.Context) error {
 		TransactionId: tran.Id,
 	}
 
-	err = h.Rabbit.Pub.Publish(&m)
+	err = h.App.Rabbit.Publisher.Publish(&m)
 	if err != nil {
 		_ = t.Rollback()
 		return errors.Wrap(err, "failed to publish enroll message")

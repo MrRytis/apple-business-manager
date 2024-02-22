@@ -18,3 +18,6 @@ migrate:
 
 rollback:
 	go run cmd/migrate/rollback.go
+
+format:
+	go fmt ./...
